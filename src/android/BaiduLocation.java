@@ -41,7 +41,7 @@ public class BaiduLocation extends CordovaPlugin {
 		ERROR_MESSAGE_MAP.put(66, "离线定位结果。通过requestOfflineLocaiton调用时对应的返回结果");
 		ERROR_MESSAGE_MAP.put(67, "离线定位失败。通过requestOfflineLocaiton调用时对应的返回结果");
 		ERROR_MESSAGE_MAP.put(68, "网络连接失败时，查找本地离线定位时对应的返回结果。");
-		ERROR_MESSAGE_MAP.put(161, "表示网络定位结果");
+		ERROR_MESSAGE_MAP.put(161, "网络定位结果");
 	};
 
 	public String getErrorMessage(int locationType) {
@@ -61,7 +61,7 @@ public class BaiduLocation extends CordovaPlugin {
 				@Override
 				public void run() {
 					locationClient = new LocationClient(cordova.getActivity());
-					locationClient.setAK("BfkPvjDGHC0ATZhIr6wxnHh9");//设置百度的ak
+					locationClient.setAK("5c7e888915b919613c19b47705e61453");//设置百度的ak
 					myListener = new MyLocationListener();
 					locationClient.registerLocationListener(myListener);
 					LocationClientOption option = new LocationClientOption();
@@ -103,16 +103,15 @@ public class BaiduLocation extends CordovaPlugin {
 			if (location == null)
 				return;
 			try {
-				JSONObject coords = new JSONObject();
-				coords.put("latitude", location.getLatitude());
-				coords.put("longitude", location.getLongitude());
-				coords.put("radius", location.getRadius());
-				coords.put("province",location.getProvince());
-				coords.put("city",location.getCity());
-				coords.put("addr",location.getAddrStr());
-				coords.put("cityCode",location.getCityCode());
+				//JSONObject coords = new JSONObject();
+				jsonObj.put("latitude", location.getLatitude());
+				jsonObj.put("longitude", location.getLongitude());
+				jsonObj.put("radius", location.getRadius());
+				jsonObj.put("province",clearNull(location.getProvince()));
+				jsonObj.put("city",clearNull(location.getCity()));
+				jsonObj.put("cityCode",clearNull(location.getCityCode()));
 
-				jsonObj.put("coords", coords);
+				//jsonObj.put("coords", coords);
 
 				int locationType = location.getLocType();
 
@@ -123,14 +122,14 @@ public class BaiduLocation extends CordovaPlugin {
 				switch (location.getLocType()) {
 
 				case BDLocation.TypeGpsLocation:
-					coords.put("speed", location.getSpeed());
-					coords.put("altitude", location.getAltitude());
+					jsonObj.put("speed", location.getSpeed());
+					jsonObj.put("altitude", location.getAltitude());
 					jsonObj.put("SatelliteNumber",
 							location.getSatelliteNumber());
 					break;
 
 				case BDLocation.TypeNetWorkLocation:
-					jsonObj.put("addr", location.getAddrStr());
+					jsonObj.put("addr", clearNull(location.getAddrStr()));
 					break;
 				}
 
@@ -156,6 +155,11 @@ public class BaiduLocation extends CordovaPlugin {
 			locationClient = null;
 		}
 		super.onDestroy();
+	}
+	
+	public String clearNull(String str){
+		if(str==null) str="";
+		return str.trim();
 	}
 
 	private void logMsg(String s) {
