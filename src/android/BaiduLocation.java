@@ -107,6 +107,10 @@ public class BaiduLocation extends CordovaPlugin {
 				coords.put("latitude", location.getLatitude());
 				coords.put("longitude", location.getLongitude());
 				coords.put("radius", location.getRadius());
+				coords.put("province",location.getProvince());
+				coords.put("city",location.getCity());
+				coords.put("addr",location.getAddrStr());
+				coords.put("cityCode",location.getCityCode());
 
 				jsonObj.put("coords", coords);
 
